@@ -77,11 +77,12 @@
                 } else if (typeof self.errorCb === "function") {
                     if(req.responseText.length > 0) {
                       self.errorCb(jQuery.parseJSON(req.responseText).message);
-                    } else
+                    } else {
                       self.errorCb("Failed to upload file");
                     }
                 }
             }
+        };
         xhr.send(formPost);
     };
 
