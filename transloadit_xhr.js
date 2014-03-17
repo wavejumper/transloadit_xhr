@@ -50,7 +50,7 @@
         });
     };
 
-    // Modified to take in an array of fileBlobs... eg a HTML canvas toDataURL()
+    // Modified to take in an array of fileBlobs... 
     TransloaditXhr.prototype.uploadFiles = function(fileBlobs) {
         var fileBlobs = [].concat(fileBlobs);
         var self = this;
