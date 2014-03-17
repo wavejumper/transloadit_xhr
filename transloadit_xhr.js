@@ -2,12 +2,16 @@
  It was originally written by the Transloadit team, but we may
  end up modifying it more in the future.
  */
+
 (function(window) {
 
+
     function TransloaditXhr(opts) {
-        this.authKey = opts.authKey;
+        this.params = opts.params || {};
         this.templateId = opts.templateId;
-        this.steps = opts.steps || {};
+        this.signature = opts.signature;
+
+        this.progressCb = opts.progressCb || null;
         this.successCb = opts.successCb || null;
         this.errorCb = opts.errorCb || null;
     }
@@ -46,17 +50,19 @@
         });
     };
 
-    TransloaditXhr.prototype.uploadFile = function(file) {
-        var params = {
-            auth: {key: this.authKey},
-            "template_id": this.templateId,
-            steps: this.steps
-        };
+    // Modified to take in an array of fileBlobs... eg a HTML canvas toDataURL()
+    TransloaditXhr.prototype.uploadFiles = function(fileBlobs) {
+        var fileBlobs = [].concat(fileBlobs);
         var self = this;
 
         var formPost = new FormData();
-        formPost.append("params", JSON.stringify(params));
-        formPost.append("file", file);
+        formPost.append("params", JSON.stringify(this.params));
+        formPost.append("signature", this.signature)
+
+        for (var i=0;i<fileBlobs.length;i++) {
+          var fileName = "file_" + i;
+          formPost.append(fileName, fileBlobs[i]);
+        }
 
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "//api2.transloadit.com/assemblies", true);
@@ -76,11 +82,9 @@
                     }
                 }
             }
-        };
-
         xhr.send(formPost);
     };
 
     window.TransloaditXhr = TransloaditXhr;
 
-})(window);
+})(window)
